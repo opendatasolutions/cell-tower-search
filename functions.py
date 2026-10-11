@@ -14,6 +14,7 @@ def API_request_bulk(api_key,base_url,file):
         print(data)
 
 
+# Makes an API request based on the user input.
 def API_request_single(api_key,base_url,mcc,mnc,lac,cellid):
     base_url = "https://opencellid.org/cell/get"
     response = requests.get(f"{base_url}?key={api_key}&mcc={mcc}&mnc={mnc}&lac={lac}&cellid={cellid}&format=json")
