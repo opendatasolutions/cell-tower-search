@@ -1,2 +1,7 @@
 celltowersearch/
 .env
+pandas_test.py
+pandas_test2.py
+test_data.csv
+.gitignore
+todo.txt

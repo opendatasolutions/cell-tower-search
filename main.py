@@ -7,6 +7,8 @@ import shlex
 import requests
 import os
 from dotenv import load_dotenv
+import pandas as pd
+from functions import * 
 
 
 # Main.
@@ -14,6 +16,10 @@ def main():
     # Load the JSON file when the program starts.
     with open("mcc-mnc-networks-2026-09-21.json", "r", encoding="utf-8") as file:
         data = json.load(file)
+
+
+    # Base URL for the API endpoint.
+    base_url = "https://opencellid.org/cell/get"
 
     # API-key to OpenCellID.
     load_dotenv()
@@ -46,23 +52,29 @@ def main():
 
         # **LOCATION** Makes an API call to OpenCellID and retrieves the location information based on the MCC, MNC, LAC/TAC and Cell ID.
         elif command == "location":
-            # Defining variables for the arguments given.
-            mcc = args[1]
-            mnc = args[2]
-            lac = args[3]
-            cellid = args[4]
 
-            # HTTPS request to the API endpoint.
-            base_url = "https://opencellid.org/cell/get"
-            response = requests.get(f"{base_url}?key={api_key}&mcc={mcc}&mnc={mnc}&lac={lac}&cellid={cellid}&format=json")
-            print(response.status_code)
-            print(response.json())
+            # If the command includes a flag -i or --input-file the program reads the given file and uses the information to make several a request to the API endpoint.
+            if args[1] == "-i" or args[1] == "--input-file":
+                file = args[2]
+
+                # Makes API requests in a bulk to the API endpoint.
+                API_request_bulk(api_key,base_url,file)
+
+            # If no flags are given the program runs in default.
+            else:
+                # Defining variables for the arguments given.
+                mcc = args[1]
+                mnc = args[2]
+                lac = args[3]
+                cellid = args[4]
+
+                # Makes a single request to the API endpoint based on the user input.
+                API_request_single(api_key,base_url,mcc,mnc,lac,cellid)
 
         # **HELP** See information about the commands.
         elif command == "help":
             print("Commands:\noperator <mcc> <mnc> -- Shows the country and the operator based on the given MCC and MNC.")
             print("location <mcc> <mnc> <lac/tac> <cell-id> -- Retrives the location information of the cell tower.")
-
 
 if __name__=="__main__":
     main()
